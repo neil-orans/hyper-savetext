@@ -55,5 +55,5 @@ exports.decorateTerm = (Term, { React, notify }) => {
   //       }
   //       alert(txt);
   //   }
-  // }
+  }
 };
