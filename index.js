@@ -21,8 +21,6 @@ exports.decorateTerm = (Term, { React, notify }) => {
         this.props.onTerminal(term);
       }
 
-      this._rootDiv = term.div_;
-
       this._addKeyboardShortcutHandler(term);
     }
 
@@ -34,7 +32,8 @@ exports.decorateTerm = (Term, { React, notify }) => {
               || (window.process.platform !== 'darwin' && !e.metaKey &&  e.ctrlKey))
               && !e.shiftKey && e.keyCode === keybinding.charCodeAt(0)) {
             console.log('savetext button pressed!');
-            // this._testFunc();
+
+            this._saveText();
           }
         }.bind(this)
       ];
@@ -45,15 +44,15 @@ exports.decorateTerm = (Term, { React, notify }) => {
     }
 
   // This doesn't work...
-  //   _testFunc() {
-  //       var classnum = prompt("Please enter your class number", "EECS 481");
-  //
-  //       if (classnum == null || classnum == "") {
-  //           txt = "User cancelled the prompt.";
-  //       } else {
-  //           txt = "You are in " + classnum;
-  //       }
-  //       alert(txt);
-  //   }
+    _saveText() {
+        const {dialog} = require("electron").remote;
+        const fs = require('fs');
+
+        var savePath = dialog.showSaveDialog({});
+
+        // fs.writeFile(savePath, fileData, function(err) {
+        //     // file saved or err
+        // });
+    }
   }
 };
