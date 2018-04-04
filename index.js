@@ -1,6 +1,6 @@
 'use strict'
 
-const keybinding = 'J';
+const keybinding = 'S';
 
 exports.decorateTerm = (Term, { React, notify }) => {
   return class extends React.Component {
@@ -33,7 +33,7 @@ exports.decorateTerm = (Term, { React, notify }) => {
               && !e.shiftKey && e.keyCode === keybinding.charCodeAt(0)) {
             console.log('savetext button pressed!');
 
-            this._saveText();
+            this._saveText(term);
           }
         }.bind(this)
       ];
@@ -44,15 +44,21 @@ exports.decorateTerm = (Term, { React, notify }) => {
     }
 
   // This doesn't work...
-    _saveText() {
+    _saveText(term) {
         const {dialog} = require("electron").remote;
         const fs = require('fs');
 
+        console.log(term);
+        let fileData = "";
+        for (let i = 0; i < term.scrollbackRows_.length; ++i) {
+            fileData += term.scrollbackRows_[i].innerText;
+            fileData += "\n";
+        }
+        fileData += term.document_.body.innerText;
         var savePath = dialog.showSaveDialog({});
-
-        // fs.writeFile(savePath, fileData, function(err) {
-        //     // file saved or err
-        // });
+        fs.writeFile(savePath, fileData, (err) => {
+            if(err) throw err;
+        });
     }
   }
 };
