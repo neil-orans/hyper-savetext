@@ -1,12 +1,13 @@
 'use strict'
 
 const keybinding = 'S';
+const {dialog} = require("electron").remote;
+const fs = require('fs');
 
 exports.decorateTerm = (Term, { React, notify }) => {
   return class extends React.Component {
     constructor (props, context) {
       super(props, context);
-
       this._onTerminal = this._onTerminal.bind(this);
     }
 
@@ -17,6 +18,7 @@ exports.decorateTerm = (Term, { React, notify }) => {
     }
 
     _onTerminal (term) {
+      console.log('Not reaching here');
       if (this.props.onTerminal) {
         this.props.onTerminal(term);
       }
@@ -32,7 +34,6 @@ exports.decorateTerm = (Term, { React, notify }) => {
               || (window.process.platform !== 'darwin' && !e.metaKey &&  e.ctrlKey))
               && !e.shiftKey && e.keyCode === keybinding.charCodeAt(0)) {
             console.log('savetext button pressed!');
-
             this._saveText(term);
           }
         }.bind(this)
@@ -43,11 +44,7 @@ exports.decorateTerm = (Term, { React, notify }) => {
       term.installKeyboard();
     }
 
-  // This doesn't work...
     _saveText(term) {
-        const {dialog} = require("electron").remote;
-        const fs = require('fs');
-
         console.log(term);
         let fileData = "";
         for (let i = 0; i < term.scrollbackRows_.length; ++i) {
