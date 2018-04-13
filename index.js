@@ -9,6 +9,14 @@ exports.decorateTerm = (Term, { React, notify }) => {
     constructor (props, context) {
       super(props, context);
       this._onTerminal = this._onTerminal.bind(this);
+      this._addKeyboardShortcutHandler = this._addKeyboardShortcutHandler.bind(this);
+      this._saveText = this._saveText.bind(this);
+      this._onMouseUp = this._onMouseUp.bind(this);
+      this._onChange = this._onChange.bind(this);
+
+      this.state = {
+          searchText: ""
+      }
     }
 
     render () {
@@ -24,6 +32,18 @@ exports.decorateTerm = (Term, { React, notify }) => {
       }
 
       this._addKeyboardShortcutHandler(term);
+      this._window = term.document_.defaultView;
+      this._window.addEventListener('mouseup', this._onMouseUp);
+    }
+
+    _onMouseUp () {
+      const newText = this._window.getSelection().toString();
+      if (!newText && !this.state.searchText) return;
+      this.setState({'searchText': newText});
+    }
+
+    _onChange (event) {
+      this.setState({'searchText': event.target.value});
     }
 
     _addKeyboardShortcutHandler(term) {
@@ -47,11 +67,16 @@ exports.decorateTerm = (Term, { React, notify }) => {
     _saveText(term) {
         console.log(term);
         let fileData = "";
-        for (let i = 0; i < term.scrollbackRows_.length; ++i) {
-            fileData += term.scrollbackRows_[i].innerText;
-            fileData += "\n";
+        if (this.state.searchText !== "") {
+            fileData = this.state.searchText;
         }
-        fileData += term.document_.body.innerText;
+        else {
+            for (let i = 0; i < term.scrollbackRows_.length; ++i) {
+                fileData += term.scrollbackRows_[i].innerText;
+                fileData += "\n";
+            }
+            fileData += term.document_.body.innerText;
+        }
         var savePath = dialog.showSaveDialog({});
         fs.writeFile(savePath, fileData, (err) => {
             if(err) throw err;
