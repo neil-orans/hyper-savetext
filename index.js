@@ -1,21 +1,20 @@
-'use strict'
-
 const keybinding = 'S';
-const {dialog} = require("electron").remote;
+const {app, dialog, globalShortcut} = require('electron')
 const fs = require('fs');
+
+let globalSelectedText = "";
+let app_;
 
 exports.decorateTerm = (Term, { React, notify }) => {
   return class extends React.Component {
     constructor (props, context) {
       super(props, context);
       this._onTerminal = this._onTerminal.bind(this);
-      this._addKeyboardShortcutHandler = this._addKeyboardShortcutHandler.bind(this);
       this._saveText = this._saveText.bind(this);
       this._onMouseUp = this._onMouseUp.bind(this);
       this._onChange = this._onChange.bind(this);
-
       this.state = {
-          searchText: ""
+          highlightedText: ""
       }
     }
 
@@ -26,49 +25,34 @@ exports.decorateTerm = (Term, { React, notify }) => {
     }
 
     _onTerminal (term) {
-      console.log('Not reaching here');
       if (this.props.onTerminal) {
         this.props.onTerminal(term);
       }
 
-      this._addKeyboardShortcutHandler(term);
+      console.log(app_);
+      console.log("me second")
       this._window = term.document_.defaultView;
       this._window.addEventListener('mouseup', this._onMouseUp);
     }
 
     _onMouseUp () {
       const newText = this._window.getSelection().toString();
-      if (!newText && !this.state.searchText) return;
-      this.setState({'searchText': newText});
+      if (!newText && !this.state.highlightedText) return;
+      this.setState({'highlightedText': newText});
+      globalSelectedText = newText;
+      if(newText === "") {
+
+      }
     }
 
     _onChange (event) {
-      this.setState({'searchText': event.target.value});
-    }
-
-    _addKeyboardShortcutHandler(term) {
-      const activatingKeyShortcutHandler = [
-        "keydown",
-        function(e) {
-          if ((  (window.process.platform === 'darwin' &&  e.metaKey && !e.ctrlKey)
-              || (window.process.platform !== 'darwin' && !e.metaKey &&  e.ctrlKey))
-              && !e.shiftKey && e.keyCode === keybinding.charCodeAt(0)) {
-            console.log('savetext button pressed!');
-            this._saveText(term);
-          }
-        }.bind(this)
-      ];
-
-      term.uninstallKeyboard();
-      term.keyboard.handlers_ = [...term.keyboard.handlers_, activatingKeyShortcutHandler];
-      term.installKeyboard();
+      this.setState({'highlightedText': event.target.value});
     }
 
     _saveText(term) {
-        console.log(term);
         let fileData = "";
-        if (this.state.searchText !== "") {
-            fileData = this.state.searchText;
+        if (this.state.highlightedText !== "") {
+            fileData = this.state.highlightedText;
         }
         else {
             for (let i = 0; i < term.scrollbackRows_.length; ++i) {
@@ -79,8 +63,60 @@ exports.decorateTerm = (Term, { React, notify }) => {
         }
         var savePath = dialog.showSaveDialog({});
         fs.writeFile(savePath, fileData, (err) => {
-            if(err) throw err;
+            if (err) throw err;
         });
     }
   }
+};
+
+exports.onApp = app => {
+  app_ = app;
+  console.log("me first")
+};
+
+function saveAllText() {
+  // console.log(app_);
+  // console.log('toggle1!!');
+  // console.log(window_.win);
+}
+
+function saveHighlightedText() {
+  // console.log('toggle2!!');
+  // console.log(window_);
+}
+
+exports.decorateMenu = menu => {
+  return menu.map(menuItem => {
+    if (menuItem.label !== 'Shell') {
+      return menuItem;
+    }
+
+    const newMenuItem = Object.assign({}, menuItem);
+    newMenuItem.submenu = [...newMenuItem.submenu];
+
+    newMenuItem.submenu.push({
+      type: 'separator'
+    });
+
+    newMenuItem.submenu.push({
+      label: 'Export Text As...',
+      type: 'normal',
+      accelerator: 'CommandOrControl+S',
+      click: item => {
+          saveAllText();
+      }
+    });
+
+    newMenuItem.submenu.push({
+      label: 'Export Selected Text As...',
+      type: 'normal',
+      enabled: globalSelectedText === "" ? 'disabled' : 'enabled',
+      accelerator: 'CommandOrControl+Shift+S',
+      click: item => {
+          saveHighlightedText(item.checked);
+      }
+    });
+
+    return newMenuItem;
+  });
 };
