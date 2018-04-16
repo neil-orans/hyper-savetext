@@ -1,4 +1,6 @@
-const {app, dialog, globalShortcut} = require('electron')
+/* jshint esversion: 6 */
+
+const {app, dialog, globalShortcut} = require('electron');
 const fs = require('fs');
 
 let app_;
@@ -7,7 +9,7 @@ let exportSelectedTextAsMenuItem;
 
 exports.onApp = app => {
     app_ = app;
-}
+};
 
 exports.onWindow = window => {
     // Get a pointer to the 'Export Selected Text As...' submenu item so
@@ -18,7 +20,7 @@ exports.onWindow = window => {
 
         // First find the 'Shell' menu
         shellIndex = -1;
-        for (menuItem in menu.items) {
+        for (var menuItem in menu.items) {
             if (menu.items[menuItem].label == 'Shell') {
                 shellIndex = menuItem;
                 break;
@@ -32,9 +34,9 @@ exports.onWindow = window => {
 
         // Once you have the shell, search for the label 'Export Selected Text As...'
         shellSubMenu = menu.items[shellIndex].submenu;
-        for (subMenuItem in shellSubMenu.items) {
+        for (var subMenuItem in shellSubMenu.items) {
             if (shellSubMenu.items[subMenuItem].label == 'Export Selected Text As...') {
-                exportSelectedTextAsMenuItem = shellSubMenu.items[subMenuItem]
+                exportSelectedTextAsMenuItem = shellSubMenu.items[subMenuItem];
             }
         }
     });
@@ -49,7 +51,7 @@ exports.onWindow = window => {
           globalSelectedText = obj.selectedText;
       }
     });
-}
+};
 
 function saveAllText() {
     win = app_.getLastFocusedWindow();
@@ -59,7 +61,7 @@ function saveAllText() {
 
 function saveHighlightedText() {
     let bwin = app_.getLastFocusedWindow();
-    var savePath = dialog.showSaveDialog(bwin, {
+    let savePath = dialog.showSaveDialog(bwin, {
         'defaultPath' : "Terminal Saved Output.txt"
     });
     if (savePath) {
@@ -128,7 +130,7 @@ exports.decorateTerm = (Term, { React, notify }) => {
           newText = this._term.term.selectionManager.selectionText;
           window.rpc.emit('text-selected', {
               'selectedText' : newText
-          }); 
+          });
       }
     }
 
@@ -167,11 +169,11 @@ exports.decorateTerm = (Term, { React, notify }) => {
                 terminalText.push(line);
             }
 
-            let terminalBody = ""
+            let terminalBody = "";
             let non_blank_line_found = false;
             for (line_num = terminalText.length - 1; line_num >= 0; line_num--) {
                 if (!non_blank_line_found && terminalText[line_num] == "") {
-                    terminalText.pop()
+                    terminalText.pop();
                 }
                 else {
                     non_blank_line_found = true;
@@ -184,16 +186,17 @@ exports.decorateTerm = (Term, { React, notify }) => {
 
         const {dialog} = require('electron').remote;
         let bwin = require('electron').remote.app.getLastFocusedWindow();
-        var savePath = dialog.showSaveDialog(bwin, {
+        let savePath = dialog.showSaveDialog(bwin, {
             'defaultPath' : "Terminal Saved Output.txt"
         });
+
         if (savePath) {
             fs.writeFile(savePath, fileData, (err) => {
                 if (err) throw err;
             });
         }
     }
-  }
+  };
 };
 
 exports.decorateMenu = menu => {
