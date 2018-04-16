@@ -145,9 +145,18 @@ exports.decorateTerm = (Term, { React, notify }) => {
             fileData += term.document_.body.innerText;
         }
         else {
-            console.log("Using version 2");
-            console.log(term.term);
-            // code dealing with xterm.js
+            console.log(term.term.buffer.lines);
+            let terminalText = "";
+            let line_num;
+            for (line_num = 0; line_num < term.term.buffer.lines.length; line_num++) {
+                let char_array;
+                let line = "";
+                for (char_array = 0; char_array < term.term.buffer.lines._array[line_num].length; char_array++) {
+                    line += term.term.buffer.lines._array[line_num][char_array][1]; // first index is actual char
+                }
+                terminalText += line + "\n";
+            }
+            console.log(terminalText);
         }
 
         const {dialog} = require('electron').remote;
