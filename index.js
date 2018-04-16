@@ -122,12 +122,10 @@ exports.decorateTerm = (Term, { React, notify }) => {
           });
       }
       else {  // Version 2
-          if (this._term.term.selectionManager.hasSelection) {
-              newText = this._term.term.selectionManager.selectionText;
-              window.rpc.emit('text-selected', {
-                  'selectedText' : newText
-              });
-          }
+          newText = this._term.term.selectionManager.selectionText;
+          window.rpc.emit('text-selected', {
+              'selectedText' : newText
+          }); 
       }
     }
 
