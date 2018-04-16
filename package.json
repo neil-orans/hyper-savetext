@@ -2,13 +2,18 @@
   "name": "hyperterm-savetext",
   "version": "0.1.0",
   "description": "Export text to file plugin for Hyper",
+  "keywords": ["hyper.app", "hyper", "hyperterm", "savetext"],
   "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/neil-orans/hyperterm-savetext"
   },
   "scripts": {
-    "test": "jshint index.js"
+    "test": "jshint index.js",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,json,md}": ["prettier --write", "git add"]
   },
   "author": "Neil Orans <norans@umich.edu>, Nick Morrison <nmorriso@umich.edu>",
   "bugs": {
@@ -16,7 +21,10 @@
   },
   "license": "MIT",
   "devDependencies": {
-      "jshint": "*"
+    "husky": "^0.14.3",
+    "jshint": "*",
+    "lint-staged": "^7.0.4",
+    "prettier": "^1.12.0"
   },
   "homepage": "https://github.com/neil-orans/hyperterm-savetext#readme"
 }
