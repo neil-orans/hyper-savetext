@@ -2,6 +2,7 @@
 
 const { app, dialog, globalShortcut } = require("electron");
 const fs = require("fs");
+const MENU_LABEL = process.platform === "darwin" ? "Shell" : "File";
 
 let app_;
 let globalSelectedText = "";
@@ -45,6 +46,9 @@ exports.onWindow = window => {
 
   // De facto 'mouseup' event for the window (linked through the 'term' react component
   window.rpc.on("text-selected", obj => {
+    if (!exportSelectedTextAsMenuItem) {
+      return; // If null, return immediately
+    }
     if (obj.selectedText === "") {
       exportSelectedTextAsMenuItem.enabled = false;
       globalSelectedText = "";
@@ -219,7 +223,7 @@ exports.decorateTerm = (Term, { React, notify }) => {
 
 exports.decorateMenu = menu => {
   return menu.map(menuItem => {
-    if (menuItem.label !== "Shell") {
+    if (menuItem.label !== MENU_LABEL) {
       return menuItem;
     }
 
