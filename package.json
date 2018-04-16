@@ -17,6 +17,6 @@
   "license": "MIT",
   "devDependencies": {
       "jshint": "*"
-  }
+  },
   "homepage": "https://github.com/neil-orans/hyperterm-savetext#readme"
 }
