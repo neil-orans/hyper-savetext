@@ -41,6 +41,7 @@ exports.onWindow = window => {
 
     // De facto 'mouseup' event for the window (linked through the 'term' react component
     window.rpc.on('text-selected', (obj) => {
+      console.log("rpc event hit");
       if (obj.selectedText === "") {
           exportSelectedTextAsMenuItem.enabled = false;
           globalSelectedText = "";
@@ -72,13 +73,17 @@ exports.decorateTerm = (Term, { React, notify }) => {
     constructor (props, context) {
       super(props, context);
       this._onTerminal = this._onTerminal.bind(this);
+      this._onDecorated = this._onDecorated.bind(this);
       this._onGlobalStoreText = this._onGlobalStoreText.bind(this);
       this._onMouseUp = this._onMouseUp.bind(this);
+      let appVersion = require('electron').remote.app.getVersion();
+      this._majorVersion = appVersion.charAt(0);
     }
 
     render () {
       return React.createElement(Term, Object.assign({}, this.props, {
-        onTerminal: this._onTerminal
+        onTerminal: this._onTerminal,
+        onDecorated: this._onDecorated
       }));
     }
 
@@ -87,30 +92,63 @@ exports.decorateTerm = (Term, { React, notify }) => {
         this.props.onTerminal(term);
       }
 
-      this._window = term.document_.defaultView;
-      this._window.addEventListener('mouseup', this._onMouseUp);
-      window.rpc.on('global-store-text', () => {this._onGlobalStoreText(term);});
-      window.rpc.emit('find-export-submenu-item', {});
+      if (this._majorVersion == "1") {
+          this._window = term.document_.defaultView;
+          this._window.addEventListener('mouseup', this._onMouseUp);
+          window.rpc.on('global-store-text', () => {this._onGlobalStoreText(term);});
+          window.rpc.emit('find-export-submenu-item', {});
+      }
+    }
+
+    _onDecorated (term) {
+      if (this.props.onDecorated) {
+        this.props.onDecorated(term);
+      }
+
+      if (this._majorVersion == "2") {
+          this._term = term;
+          term.termRef.onmouseup = this._onMouseUp;
+          window.rpc.on('global-store-text', () => {this._onGlobalStoreText(term);});
+          window.rpc.emit('find-export-submenu-item', {});
+      }
     }
 
     _onMouseUp () {
-      const newText = this._window.getSelection().toString();
-      if (!newText) return;
-
-      window.rpc.emit('text-selected', {
-          'selectedText' : newText
-      });
+      let newText = "";
+      if (this._majorVersion == "1") {
+          newText = this._window.getSelection().toString();
+          if (!newText) return;
+          window.rpc.emit('text-selected', {
+              'selectedText' : newText
+          });
+      }
+      else {  // Version 2
+          if (this._term.term.selectionManager.hasSelection) {
+              newText = this._term.term.selectionManager.selectionText;
+              window.rpc.emit('text-selected', {
+                  'selectedText' : newText
+              });
+          }
+      }
     }
+
 
     _onGlobalStoreText(term) {
         let fileData = "";
-        // Get all lines from scrollback
-        for (let i = 0; i < term.scrollbackRows_.length; ++i) {
-            fileData += term.scrollbackRows_[i].innerText;
-            fileData += "\n";
+        if (this._majorVersion == "1") {
+            // Get all lines from scrollback
+            for (let i = 0; i < term.scrollbackRows_.length; ++i) {
+                fileData += term.scrollbackRows_[i].innerText;
+                fileData += "\n";
+            }
+            // Add current view to scrollback lines to complete terminals text
+            fileData += term.document_.body.innerText;
         }
-        // Add current view to scrollback lines to complete terminals text
-        fileData += term.document_.body.innerText;
+        else {
+            console.log("Using version 2");
+            console.log(term.term);
+            // code dealing with xterm.js
+        }
 
         const {dialog} = require('electron').remote;
         var savePath = dialog.showSaveDialog({});
@@ -149,7 +187,6 @@ exports.decorateMenu = menu => {
       label: 'Export Selected Text As...',
       type: 'normal',
       enabled: false,
-      id: 'hyperterm-savetext',
       accelerator: 'CommandOrControl+Shift+S',
       click: item => {
           saveHighlightedText();
