@@ -13,10 +13,10 @@
 
 * **NOTE:** hyperterm-savetext has not yet been tested with Windows or Linux.
 
-#### Using [hpm](https://github.com/zeit/hpm)
+#### Using Hyper's CLI
 
 ```
-hpm install hyperterm-savetext
+hyper install hyperterm-savetext
 ```
 
 #### Manually
