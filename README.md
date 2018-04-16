@@ -4,9 +4,10 @@
 
 **hyperterm-savetext is a text export plugin for [Hyper](https://hyper.is/)**. It enables you to save/export text within the terminal to a text file. The feel and functionality of the plugin has been modeled after the same feature within macOS's Terminal.app. Currently, Hyper has been tested on macOS with the stable version of Hyper 1.4.8, and the canary version Hyper 2.0.0-canary.16.
 
-<img src="./screenshots/screenshot1.jpg" width="400px" align="center" />
-
-<img src="./screenshots/screenshot2.png" width="700px" align="center" />
+<p align="center">
+<img src="./screenshots/screenshot1.jpg" width="400px" />
+<img src="./screenshots/screenshot2.png" width="700px" />
+</p>
 
 ## Install
 
