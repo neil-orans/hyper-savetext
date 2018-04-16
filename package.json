@@ -1,6 +1,6 @@
 {
   "name": "hyperterm-savetext",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "Export text to file plugin for Hyper",
   "keywords": ["hyper.app", "hyper", "hyperterm", "savetext", "hyper-plugin"],
   "main": "index.js",
