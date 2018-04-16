@@ -44,10 +44,12 @@ exports.onWindow = window => {
     }
   });
 
-  // De facto 'mouseup' event for the window (linked through the 'term' react component
+  // De facto 'mouseup' event for the window (linked through the 'term' react component)
   window.rpc.on("text-selected", obj => {
     if (!exportSelectedTextAsMenuItem) {
-      return; // If null, return immediately
+      // Lost the reference to the menu item which occasionally happens
+      // during a hot reload
+      return;
     }
     if (obj.selectedText === "") {
       exportSelectedTextAsMenuItem.enabled = false;
@@ -59,13 +61,14 @@ exports.onWindow = window => {
   });
 };
 
-function saveAllText() {
+let saveAllText = () => {
   win = app_.getLastFocusedWindow();
   win.rpc.emit("global-store-text", {});
   return;
-}
+};
 
-function saveHighlightedText() {
+let saveHighlightedText = () => {
+  // Get BrowserWindow object to pass into Electron's saveDialog
   let bwin = app_.getLastFocusedWindow();
   let savePath = dialog.showSaveDialog(bwin, {
     defaultPath: "Terminal Saved Output.txt"
@@ -76,7 +79,7 @@ function saveHighlightedText() {
     });
   }
   return;
-}
+};
 
 exports.decorateTerm = (Term, { React, notify }) => {
   return class extends React.Component {
@@ -105,14 +108,12 @@ exports.decorateTerm = (Term, { React, notify }) => {
         this.props.onTerminal(term);
       }
 
-      if (this._majorVersion == "1") {
-        this._window = term.document_.defaultView;
-        this._window.addEventListener("mouseup", this._onMouseUp);
-        window.rpc.on("global-store-text", () => {
-          this._onGlobalStoreText(term);
-        });
-        window.rpc.emit("find-export-submenu-item", {});
-      }
+      this._window = term.document_.defaultView;
+      this._window.addEventListener("mouseup", this._onMouseUp);
+      window.rpc.on("global-store-text", () => {
+        this._onGlobalStoreText(term);
+      });
+      window.rpc.emit("find-export-submenu-item", {});
     }
 
     _onDecorated(term) {
@@ -120,6 +121,8 @@ exports.decorateTerm = (Term, { React, notify }) => {
         this.props.onDecorated(term);
       }
 
+      // Version 1 will set the event listener in onTerminal so only do the
+      // following code for Version 2 of Hyper
       if (this._majorVersion == "2") {
         this._term = term;
         term.termRef.onmouseup = this._onMouseUp;
@@ -132,6 +135,7 @@ exports.decorateTerm = (Term, { React, notify }) => {
 
     _onMouseUp() {
       let newText = "";
+      // Version 1 / hterm
       if (this._majorVersion == "1") {
         newText = this._window.getSelection().toString();
         if (!newText) return;
@@ -139,7 +143,7 @@ exports.decorateTerm = (Term, { React, notify }) => {
           selectedText: newText
         });
       } else {
-        // Version 2
+        // Version 2 / xterm.js
         newText = this._term.term.selectionManager.selectionText;
         window.rpc.emit("text-selected", {
           selectedText: newText
@@ -150,16 +154,15 @@ exports.decorateTerm = (Term, { React, notify }) => {
     _onGlobalStoreText(term) {
       let fileData = "";
       if (this._majorVersion == "1") {
-        // hterm (version 1)
         // Get all lines from scrollback
         for (let i = 0; i < term.scrollbackRows_.length; ++i) {
           fileData += term.scrollbackRows_[i].innerText;
           fileData += "\n";
         }
+
         // Add current view to scrollback lines to complete terminals text
         fileData += term.document_.body.innerText;
       } else {
-        // xterm.js (version 2)
         let terminalText = [];
         let line_num;
         for (
@@ -175,6 +178,7 @@ exports.decorateTerm = (Term, { React, notify }) => {
             char_array >= 0;
             char_array--
           ) {
+            // Build lines character by character, removing trailing whitespace
             let char = term.term.buffer.lines._array[line_num][char_array][1];
             if (
               (non_whitespace_found && char == " ") ||
@@ -194,6 +198,7 @@ exports.decorateTerm = (Term, { React, notify }) => {
 
         let terminalBody = "";
         let non_blank_line_found = false;
+        // Remove blank lines at the end of the terminal output
         for (line_num = terminalText.length - 1; line_num >= 0; line_num--) {
           if (!non_blank_line_found && terminalText[line_num] == "") {
             terminalText.pop();
