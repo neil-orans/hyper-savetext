@@ -58,7 +58,10 @@ function saveAllText() {
 }
 
 function saveHighlightedText() {
-    var savePath = dialog.showSaveDialog({});
+    let bwin = app_.getLastFocusedWindow();
+    var savePath = dialog.showSaveDialog(bwin, {
+        'defaultPath' : "Terminal Saved Output.txt"
+    });
     if (savePath) {
         fs.writeFile(savePath, globalSelectedText, (err) => {
             if (err) throw err;
@@ -180,7 +183,10 @@ exports.decorateTerm = (Term, { React, notify }) => {
         }
 
         const {dialog} = require('electron').remote;
-        var savePath = dialog.showSaveDialog({});
+        let bwin = require('electron').remote.app.getLastFocusedWindow();
+        var savePath = dialog.showSaveDialog(bwin, {
+            'defaultPath' : "Terminal Saved Output.txt"
+        });
         if (savePath) {
             fs.writeFile(savePath, fileData, (err) => {
                 if (err) throw err;
