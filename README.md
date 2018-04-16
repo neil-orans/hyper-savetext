@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/neil-orans/hyperterm-savetext.svg?branch=master)](https://travis-ci.org/neil-orans/hyperterm-savetext) [![npm version](https://badge.fury.io/js/hyperterm-savetext.svg)](https://badge.fury.io/js/hyperterm-savetext)
 
-**hyperterm-savetext is a text export plugin for [Hyper](https://hyper.is/)**. It enables you to save/export text within the terminal to a text file. The feel and functionality of the plugin has been modeled after the same feature within macOS's Terminal.app. Currently, Hyper has been tested on macOS with the stable version of Hyper 1.4.8, and the canary version Hyper 2.0.0-canary.16.
+**hyperterm-savetext is a text export plugin for [Hyper](https://hyper.is/)**. It enables you to save/export text within the terminal to a text file. The feel and functionality of the plugin has been modeled after the same feature within macOS's Terminal.app. Currently, Hyper has been tested on macOS with the stable version of Hyper 1.4.8 and 2.0.0.
 
 <p align="center">
 <img src="./screenshots/screenshot1.jpg" width="400px" />
@@ -11,7 +11,7 @@
 
 ## Install
 
-* **NOTE:** hyperterm-savetext has not yet been tested with Windows or Linux.
+**NOTE ⚠ :** hyperterm-savetext has not yet been tested with Windows or Linux.
 
 #### Using Hyper's CLI
 
@@ -56,6 +56,10 @@ To set up the project for development:
 
 * Neil Orans [@neil-orans](https://github.com/neil-orans)
 * Nick Morrison [@NicholasMorrison](https://github.com/nicholasmorrison)
+
+## Credit
+
+Originally suggested by [@mhamdan95](https://github.com/mhamdan95) as a [plugin request](https://github.com/zeit/hyper/issues/2693) on Hyper's issue tracker.
 
 ## Theme
 
