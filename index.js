@@ -158,11 +158,12 @@ exports.decorateTerm = (Term, { React, notify }) => {
 
     _onGlobalStoreText(term) {
       let fileData = "";
+      let newLineChar = process.platform === 'win32'? '\r\n' : '\n'
       if (this._majorVersion == "1") {
         // Get all lines from scrollback
         for (let i = 0; i < term.scrollbackRows_.length; ++i) {
           fileData += term.scrollbackRows_[i].innerText;
-          fileData += "\n";
+          fileData += newLineChar;
         }
 
         // Add current view to scrollback lines to complete terminals text
