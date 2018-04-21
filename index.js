@@ -201,19 +201,16 @@ exports.decorateTerm = (Term, { React, notify }) => {
           terminalText.push(line);
         }
 
-        let terminalBody = "";
-        let non_blank_line_found = false;
         // Remove blank lines at the end of the terminal output
         for (line_num = terminalText.length - 1; line_num >= 0; line_num--) {
-          if (!non_blank_line_found && terminalText[line_num] == "") {
+          if (terminalText[line_num] == "") {
             terminalText.pop();
           } else {
-            non_blank_line_found = true;
-            terminalBody = terminalText[line_num] + "\n" + terminalBody;
+              break;
           }
         }
 
-        fileData = terminalBody;
+        fileData = terminalText.join(process.platform === 'win32'? '\r\n' : '\n');
       }
 
       const { dialog } = require("electron").remote;
