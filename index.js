@@ -15,7 +15,7 @@ exports.onApp = app => {
 exports.onWindow = window => {
   // Get a pointer to the 'Export Selected Text As...' submenu item so
   // we can gray it out when no text is selected, and enable it when text is
-  // selected. This will only happen once and is triggered by onTerminal
+  // selected. This will only happen once and is triggered by onTerminal/Decor.
   window.rpc.on("find-export-submenu-item", obj => {
     menu = app_.getApplicationMenu();
 
@@ -44,13 +44,15 @@ exports.onWindow = window => {
     }
   });
 
-  // De facto 'mouseup' event for the window (linked through the 'term' react component)
+  // Event for when something has been selected
   window.rpc.on("text-selected", obj => {
     if (!exportSelectedTextAsMenuItem) {
       // Lost the reference to the menu item which occasionally happens
       // during a hot reload
       return;
     }
+
+    // This is what grays out the menu item when nothing is selected
     if (obj.selectedText === "") {
       exportSelectedTextAsMenuItem.enabled = false;
       globalSelectedText = "";
@@ -63,7 +65,10 @@ exports.onWindow = window => {
 
 let saveAllText = () => {
   win = app_.getLastFocusedWindow();
-  win.rpc.emit("global-store-text", {});
+  // If no window is open, win will be null
+  if (win) {
+      win.rpc.emit("global-store-text", {});
+  }
   return;
 };
 
@@ -88,7 +93,7 @@ exports.decorateTerm = (Term, { React, notify }) => {
       this._onTerminal = this._onTerminal.bind(this);
       this._onDecorated = this._onDecorated.bind(this);
       this._onGlobalStoreText = this._onGlobalStoreText.bind(this);
-      this._onMouseUp = this._onMouseUp.bind(this);
+      this._textSelected = this._textSelected.bind(this);
       let appVersion = require("electron").remote.app.getVersion();
       this._majorVersion = appVersion.charAt(0);
     }
@@ -109,7 +114,7 @@ exports.decorateTerm = (Term, { React, notify }) => {
       }
 
       this._window = term.document_.defaultView;
-      this._window.addEventListener("mouseup", this._onMouseUp);
+      this._window.addEventListener("mouseup", this._textSelected);
       window.rpc.on("global-store-text", () => {
         this._onGlobalStoreText(term);
       });
@@ -125,7 +130,7 @@ exports.decorateTerm = (Term, { React, notify }) => {
       // following code for Version 2 of Hyper
       if (this._majorVersion == "2") {
         this._term = term;
-        term.termRef.onmouseup = this._onMouseUp;
+        this._term.term.on('selection', this._textSelected);
         window.rpc.on("global-store-text", () => {
           this._onGlobalStoreText(term);
         });
@@ -133,22 +138,22 @@ exports.decorateTerm = (Term, { React, notify }) => {
       }
     }
 
-    _onMouseUp() {
-      let newText = "";
-      // Version 1 / hterm
-      if (this._majorVersion == "1") {
-        newText = this._window.getSelection().toString();
-        if (!newText) return;
-        window.rpc.emit("text-selected", {
-          selectedText: newText
-        });
-      } else {
-        // Version 2 / xterm.js
-        newText = this._term.term.selectionManager.selectionText;
-        window.rpc.emit("text-selected", {
-          selectedText: newText
-        });
-      }
+    _textSelected() {
+        let newText = "";
+        // Version 1 / hterm
+        if (this._majorVersion == "1") {
+          newText = this._window.getSelection().toString();
+          if (!newText) return;
+          window.rpc.emit("text-selected", {
+            selectedText: newText
+          });
+        } else {
+          // Version 2 / xterm.js
+          newText = this._term.term.selectionManager.selectionText;
+          window.rpc.emit("text-selected", {
+            selectedText: newText
+          });
+        }
     }
 
     _onGlobalStoreText(term) {
