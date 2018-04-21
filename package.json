@@ -1,5 +1,5 @@
 {
-  "name": "hyperterm-savetext",
+  "name": "hyper-savetext",
   "version": "0.9.2",
   "description": "Export text to file plugin for Hyper",
   "keywords": [
@@ -12,7 +12,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/neil-orans/hyperterm-savetext"
+    "url": "git+ssh://git@github.com/neil-orans/hyper-savetext"
   },
   "scripts": {
     "test": "jshint index.js",
@@ -26,7 +26,7 @@
   },
   "author": "Neil Orans <norans@umich.edu>, Nick Morrison <nmorriso@umich.edu>",
   "bugs": {
-    "url": "https://github.com/neil-orans/hyperterm-savetext/issues"
+    "url": "https://github.com/neil-orans/hyper-savetext/issues"
   },
   "license": "MIT",
   "devDependencies": {
@@ -35,7 +35,7 @@
     "lint-staged": "^7.0.4",
     "prettier": "^1.12.0"
   },
-  "homepage": "https://github.com/neil-orans/hyperterm-savetext#readme",
+  "homepage": "https://github.com/neil-orans/hyper-savetext#readme",
   "dependencies": {
     "npm": "^5.8.0"
   }

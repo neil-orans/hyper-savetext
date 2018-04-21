@@ -1,8 +1,8 @@
-# hyperterm-savetext
+# hyper-savetext
 
-[![Build Status](https://travis-ci.org/neil-orans/hyperterm-savetext.svg?branch=master)](https://travis-ci.org/neil-orans/hyperterm-savetext) [![npm version](https://badge.fury.io/js/hyperterm-savetext.svg)](https://badge.fury.io/js/hyperterm-savetext)
+[![Build Status](https://travis-ci.org/neil-orans/hyper-savetext.svg?branch=master)](https://travis-ci.org/neil-orans/hyper-savetext) [![npm version](https://badge.fury.io/js/hyper-savetext.svg)](https://badge.fury.io/js/hyper-savetext)
 
-**hyperterm-savetext is a text export plugin for [Hyper](https://hyper.is/)**. It enables you to save/export text within the terminal to a text file. The feel and functionality of the plugin has been modeled after the same feature within macOS's Terminal.app. Currently, Hyper has been tested on macOS with the stable version of Hyper 1.4.8 and 2.0.0.
+**hyper-savetext is a text export plugin for [Hyper](https://hyper.is/)**. It enables you to save/export text within the terminal to a text file. The feel and functionality of the plugin has been modeled after the same feature within macOS's Terminal.app. Currently, Hyper has been tested on macOS with the stable version of Hyper 1.4.8 and 2.0.0.
 
 <p align="center">
 <img src="./screenshots/screenshot1.jpg" width="400px" />
@@ -11,21 +11,21 @@
 
 ## Install
 
-**NOTE ⚠ :** hyperterm-savetext has not yet been tested with Windows or Linux.
+**NOTE ⚠ :** hyper-savetext has not yet been tested with Windows or Linux.
 
 #### Using Hyper's CLI
 
 ```
-hyper install hyperterm-savetext
+hyper install hyper-savetext
 ```
 
 #### Manually
 
-To install, edit `~/.hyper.js` and add `"hyperterm-savetext"` to `plugins`:
+To install, edit `~/.hyper.js` and add `"hyper-savetext"` to `plugins`:
 
 ```
 plugins: [
-  "hyperterm-savetext",
+  "hyper-savetext",
   // other plugins...
 ],
 ```
@@ -36,17 +36,17 @@ You have the option to save all the text in the terminal or just the selection. 
 
 ## Contributing
 
-Feel free to contribute to HyperLine by [requesting a feature](https://github.com/neil-orans/hyperterm-savetext/issues/new), [submitting a bug](https://github.com/neil-orans/hyperterm-savetext/issues/new) or contributing code.
+Feel free to contribute to HyperLine by [requesting a feature](https://github.com/neil-orans/hyper-savetext/issues/new), [submitting a bug](https://github.com/neil-orans/hyper-savetext/issues/new) or contributing code.
 
 To set up the project for development:
 
-1.  Clone the repo to `~/.hyper_plugins/local/hyperterm-savetext`
+1.  Clone the repo to `~/.hyper_plugins/local/hyper-savetext`
 2.  Add this to your `.hyper.js`:
 
 ```js
   localPlugins: [
     // local plugins...
-    'hyperterm-savetext'
+    'hyper-savetext'
   ],
 ```
 

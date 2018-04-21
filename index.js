@@ -19,22 +19,22 @@ exports.onWindow = window => {
   window.rpc.on("find-export-submenu-item", obj => {
     menu = app_.getApplicationMenu();
 
-    // First find the 'Shell' menu
-    shellIndex = -1;
+    // First find the menu label
+    menuLabelIndex = -1;
     for (var menuItem in menu.items) {
-      if (menu.items[menuItem].label == "Shell") {
-        shellIndex = menuItem;
+      if (menu.items[menuItem].label == MENU_LABEL) {
+        menuLabelIndex = menuItem;
         break;
       }
     }
 
-    if (shellIndex == -1) {
-      // Error - Shell menu should always be findable
+    if (menuLabelIndex == -1) {
+      // Error - menu label should always be findable
       return;
     }
 
     // Once you have the shell, search for the label 'Export Selected Text As...'
-    shellSubMenu = menu.items[shellIndex].submenu;
+    shellSubMenu = menu.items[menuLabelIndex].submenu;
     for (var subMenuItem in shellSubMenu.items) {
       if (
         shellSubMenu.items[subMenuItem].label == "Export Selected Text As..."
