@@ -1,6 +1,6 @@
 {
   "name": "hyper-savetext",
-  "version": "0.9.2",
+  "version": "1.0.0",
   "description": "Export text to file plugin for Hyper",
   "keywords": [
     "hyper.app",
@@ -20,7 +20,7 @@
   },
   "lint-staged": {
     "*.{js,json,md}": [
-      "prettier --write",
+      "prettier --print-width 120 --single-quote --write",
       "git add"
     ]
   },

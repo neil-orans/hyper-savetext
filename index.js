@@ -1,11 +1,12 @@
 /* jshint esversion: 6 */
 
-const { app, dialog, globalShortcut } = require("electron");
-const fs = require("fs");
-const MENU_LABEL = process.platform === "darwin" ? "Shell" : "File";
+const { app, dialog, globalShortcut } = require('electron');
+const fs = require('fs');
+const MENU_LABEL = process.platform === 'darwin' ? 'Shell' : 'File';
+const newLineChar = process.platform === 'win32' ? '\r\n' : '\n';
 
 let app_;
-let globalSelectedText = "";
+let globalSelectedText = '';
 let exportSelectedTextAsMenuItem;
 
 exports.onApp = app => {
@@ -16,7 +17,7 @@ exports.onWindow = window => {
   // Get a pointer to the 'Export Selected Text As...' submenu item so
   // we can gray it out when no text is selected, and enable it when text is
   // selected. This will only happen once and is triggered by onTerminal/Decor.
-  window.rpc.on("find-export-submenu-item", obj => {
+  window.rpc.on('find-export-submenu-item', obj => {
     menu = app_.getApplicationMenu();
 
     // First find the menu label
@@ -36,16 +37,14 @@ exports.onWindow = window => {
     // Once you have the shell, search for the label 'Export Selected Text As...'
     shellSubMenu = menu.items[menuLabelIndex].submenu;
     for (var subMenuItem in shellSubMenu.items) {
-      if (
-        shellSubMenu.items[subMenuItem].label == "Export Selected Text As..."
-      ) {
+      if (shellSubMenu.items[subMenuItem].label == 'Export Selected Text As...') {
         exportSelectedTextAsMenuItem = shellSubMenu.items[subMenuItem];
       }
     }
   });
 
   // Event for when something has been selected
-  window.rpc.on("text-selected", obj => {
+  window.rpc.on('text-selected', obj => {
     if (!exportSelectedTextAsMenuItem) {
       // Lost the reference to the menu item which occasionally happens
       // during a hot reload
@@ -53,9 +52,9 @@ exports.onWindow = window => {
     }
 
     // This is what grays out the menu item when nothing is selected
-    if (obj.selectedText === "") {
+    if (obj.selectedText === '') {
       exportSelectedTextAsMenuItem.enabled = false;
-      globalSelectedText = "";
+      globalSelectedText = '';
     } else {
       exportSelectedTextAsMenuItem.enabled = true;
       globalSelectedText = obj.selectedText;
@@ -67,7 +66,7 @@ let saveAllText = () => {
   win = app_.getLastFocusedWindow();
   // If no window is open, win will be null
   if (win) {
-      win.rpc.emit("global-store-text", {});
+    win.rpc.emit('global-store-text', {});
   }
   return;
 };
@@ -76,7 +75,7 @@ let saveHighlightedText = () => {
   // Get BrowserWindow object to pass into Electron's saveDialog
   let bwin = app_.getLastFocusedWindow();
   let savePath = dialog.showSaveDialog(bwin, {
-    defaultPath: "Terminal Saved Output.txt"
+    defaultPath: 'Terminal Saved Output.txt'
   });
   if (savePath) {
     fs.writeFile(savePath, globalSelectedText, err => {
@@ -94,7 +93,7 @@ exports.decorateTerm = (Term, { React, notify }) => {
       this._onDecorated = this._onDecorated.bind(this);
       this._onGlobalStoreText = this._onGlobalStoreText.bind(this);
       this._textSelected = this._textSelected.bind(this);
-      let appVersion = require("electron").remote.app.getVersion();
+      let appVersion = require('electron').remote.app.getVersion();
       this._majorVersion = appVersion.charAt(0);
     }
 
@@ -114,11 +113,11 @@ exports.decorateTerm = (Term, { React, notify }) => {
       }
 
       this._window = term.document_.defaultView;
-      this._window.addEventListener("mouseup", this._textSelected);
-      window.rpc.on("global-store-text", () => {
+      this._window.addEventListener('mouseup', this._textSelected);
+      window.rpc.on('global-store-text', () => {
         this._onGlobalStoreText(term);
       });
-      window.rpc.emit("find-export-submenu-item", {});
+      window.rpc.emit('find-export-submenu-item', {});
     }
 
     _onDecorated(term) {
@@ -128,38 +127,38 @@ exports.decorateTerm = (Term, { React, notify }) => {
 
       // Version 1 will set the event listener in onTerminal so only do the
       // following code for Version 2 of Hyper
-      if (this._majorVersion == "2") {
+      if (this._majorVersion == '2') {
         this._term = term;
         this._term.term.on('selection', this._textSelected);
-        window.rpc.on("global-store-text", () => {
+        this._term.term.on('refresh', this._textSelected);
+        window.rpc.on('global-store-text', () => {
           this._onGlobalStoreText(term);
         });
-        window.rpc.emit("find-export-submenu-item", {});
+        window.rpc.emit('find-export-submenu-item', {});
       }
     }
 
     _textSelected() {
-        let newText = "";
-        // Version 1 / hterm
-        if (this._majorVersion == "1") {
-          newText = this._window.getSelection().toString();
-          if (!newText) return;
-          window.rpc.emit("text-selected", {
-            selectedText: newText
-          });
-        } else {
-          // Version 2 / xterm.js
-          newText = this._term.term.selectionManager.selectionText;
-          window.rpc.emit("text-selected", {
-            selectedText: newText
-          });
-        }
+      let newText = '';
+      // Version 1 / hterm
+      if (this._majorVersion == '1') {
+        newText = this._window.getSelection().toString();
+        if (!newText) return;
+        window.rpc.emit('text-selected', {
+          selectedText: newText
+        });
+      } else {
+        // Version 2 / xterm.js
+        newText = this._term.term.selectionManager.selectionText;
+        window.rpc.emit('text-selected', {
+          selectedText: newText
+        });
+      }
     }
 
     _onGlobalStoreText(term) {
-      let fileData = "";
-      let newLineChar = process.platform === 'win32'? '\r\n' : '\n'
-      if (this._majorVersion == "1") {
+      let fileData = '';
+      if (this._majorVersion == '1') {
         // Get all lines from scrollback
         for (let i = 0; i < term.scrollbackRows_.length; ++i) {
           fileData += term.scrollbackRows_[i].innerText;
@@ -171,29 +170,18 @@ exports.decorateTerm = (Term, { React, notify }) => {
       } else {
         let terminalText = [];
         let line_num;
-        for (
-          line_num = 0;
-          line_num < term.term.buffer.lines.length;
-          line_num++
-        ) {
+        for (line_num = 0; line_num < term.term.buffer.lines.length; line_num++) {
           let char_array;
-          let line = "";
+          let line = '';
           let non_whitespace_found = false;
-          for (
-            char_array = term.term.buffer.lines._array[line_num].length - 1;
-            char_array >= 0;
-            char_array--
-          ) {
+          for (char_array = term.term.buffer.lines._array[line_num].length - 1; char_array >= 0; char_array--) {
             // Build lines character by character, removing trailing whitespace
             let char = term.term.buffer.lines._array[line_num][char_array][1];
-            if (
-              (non_whitespace_found && char == " ") ||
-              (non_whitespace_found && char != " ")
-            ) {
+            if ((non_whitespace_found && char == ' ') || (non_whitespace_found && char != ' ')) {
               line = char + line; // first index is actual char
-            } else if (!non_whitespace_found && char == " ") {
+            } else if (!non_whitespace_found && char == ' ') {
               continue;
-            } else if (!non_whitespace_found && char != " ") {
+            } else if (!non_whitespace_found && char != ' ') {
               non_whitespace_found = true;
               line = char + line; // first index is actual char
             }
@@ -204,20 +192,20 @@ exports.decorateTerm = (Term, { React, notify }) => {
 
         // Remove blank lines at the end of the terminal output
         for (line_num = terminalText.length - 1; line_num >= 0; line_num--) {
-          if (terminalText[line_num] == "") {
+          if (terminalText[line_num] == '') {
             terminalText.pop();
           } else {
-              break;
+            break;
           }
         }
 
-        fileData = terminalText.join(process.platform === 'win32'? '\r\n' : '\n');
+        fileData = terminalText.join(newLineChar);
       }
 
-      const { dialog } = require("electron").remote;
-      let bwin = require("electron").remote.app.getLastFocusedWindow();
+      const { dialog } = require('electron').remote;
+      let bwin = require('electron').remote.app.getLastFocusedWindow();
       let savePath = dialog.showSaveDialog(bwin, {
-        defaultPath: "Terminal Saved Output.txt"
+        defaultPath: 'Terminal Saved Output.txt'
       });
 
       if (savePath) {
@@ -239,23 +227,23 @@ exports.decorateMenu = menu => {
     newMenuItem.submenu = [...newMenuItem.submenu];
 
     newMenuItem.submenu.push({
-      type: "separator"
+      type: 'separator'
     });
 
     newMenuItem.submenu.push({
-      label: "Export Text As...",
-      type: "normal",
-      accelerator: "CommandOrControl+S",
+      label: 'Export Text As...',
+      type: 'normal',
+      accelerator: 'CommandOrControl+S',
       click: item => {
         saveAllText();
       }
     });
 
     newMenuItem.submenu.push({
-      label: "Export Selected Text As...",
-      type: "normal",
+      label: 'Export Selected Text As...',
+      type: 'normal',
       enabled: false,
-      accelerator: "CommandOrControl+Shift+S",
+      accelerator: 'CommandOrControl+Shift+S',
       click: item => {
         saveHighlightedText();
       }
