@@ -143,7 +143,7 @@ exports.decorateTerm = (Term, { React, notify }) => {
       // Version 1 / hterm
       if (this._majorVersion == '1') {
         newText = this._window.getSelection().toString();
-        if (!newText) return;
+        //if (!newText) return;
         window.rpc.emit('text-selected', {
           selectedText: newText
         });
