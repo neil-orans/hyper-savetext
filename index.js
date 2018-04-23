@@ -129,6 +129,7 @@ exports.decorateTerm = (Term, { React, notify }) => {
       // following code for Version 2 of Hyper
       if (this._majorVersion == '2') {
         this._term = term;
+        term.termRef.onmouseup = this._textSelected;
         this._term.term.on('selection', this._textSelected);
         this._term.term.on('refresh', this._textSelected);
         window.rpc.on('global-store-text', () => {
@@ -143,7 +144,6 @@ exports.decorateTerm = (Term, { React, notify }) => {
       // Version 1 / hterm
       if (this._majorVersion == '1') {
         newText = this._window.getSelection().toString();
-        //if (!newText) return;
         window.rpc.emit('text-selected', {
           selectedText: newText
         });
