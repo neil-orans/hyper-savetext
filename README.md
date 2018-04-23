@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/neil-orans/hyper-savetext.svg?branch=master)](https://travis-ci.org/neil-orans/hyper-savetext) [![npm version](https://badge.fury.io/js/hyper-savetext.svg)](https://badge.fury.io/js/hyper-savetext)
 
-**hyper-savetext is a text export plugin for [Hyper](https://hyper.is/)**. It enables you to save/export text within the terminal to a text file. The feel and functionality of the plugin has been modeled after the same feature within macOS's Terminal.app. Currently, Hyper has been tested on macOS with the stable version of Hyper 1.4.8 and 2.0.0.
+**hyper-savetext is a text export plugin for [Hyper](https://hyper.is/)**. It enables you to save/export text within the terminal to a text file. The feel and functionality of the plugin has been modeled after the same feature within macOS's Terminal.app. Currently, Hyper has been tested on macOS, Linux, and Windows with the stable version of Hyper 1.4.8 and 2.0.0.
 
 <p align="center">
 <img src="./screenshots/screenshot1.jpg" width="400px" />
@@ -10,8 +10,6 @@
 </p>
 
 ## Install
-
-**NOTE ⚠ :** hyper-savetext has not yet been tested with Windows or Linux.
 
 #### Using Hyper's CLI
 
@@ -36,7 +34,7 @@ You have the option to save all the text in the terminal or just the selection. 
 
 ## Contributing
 
-Feel free to contribute to HyperLine by [requesting a feature](https://github.com/neil-orans/hyper-savetext/issues/new), [submitting a bug](https://github.com/neil-orans/hyper-savetext/issues/new) or contributing code.
+Feel free to contribute to hyper-savetext by [requesting a feature](https://github.com/neil-orans/hyper-savetext/issues/new), [submitting a bug](https://github.com/neil-orans/hyper-savetext/issues/new) or contributing code.
 
 To set up the project for development:
 
