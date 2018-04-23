@@ -30,7 +30,7 @@ plugins: [
 
 ## Using the plugin
 
-You have the option to save all the text in the terminal or just the selection. The save button is under Hyper's 'Shell' menu, as shown in the first screenshot above. Saving can also be done through the keybindings Cmd-S (Ctrl for Windows/Linux) or Cmd-Shift-S, which corresponds to saving all the terminal text or just the current selection, respectively.
+You have the option to save all the text in the terminal or just the selection. The save button is under Hyper's 'Shell' menu on macOS, and the 'File' menu on Window and Linux. Saving can also be done through the keybindings Cmd-S (Ctrl for Windows/Linux) or Cmd-Shift-S, which corresponds to saving all the terminal text or just the current selection, respectively.
 
 ## Contributing
 
