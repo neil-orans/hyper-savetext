@@ -19,7 +19,7 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "*.{js,json,md}": [
+    "*.{js,json}": [
       "prettier --print-width 120 --single-quote --write",
       "git add"
     ]
