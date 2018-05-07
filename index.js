@@ -133,7 +133,7 @@ exports.decorateTerm = (Term, { React, notify }) => {
         this._term.termRef.onmouseup = this._textSelected;
         let eventObj = this._term.term._events;
         if ('selection' in eventObj){
-            let selectionObj = eventObj['selection'];
+            let selectionObj = eventObj.selection;
             let function_already_stored = false;
             for (var i in selectionObj) {
                 let funcName = selectionObj[i].name;
