@@ -95,6 +95,7 @@ exports.decorateTerm = (Term, { React, notify }) => {
       this._textSelected = this._textSelected.bind(this);
       let appVersion = require('electron').remote.app.getVersion();
       this._majorVersion = appVersion.charAt(0);
+      this._eventTriggersSet = false;
     }
 
     render() {
@@ -127,15 +128,38 @@ exports.decorateTerm = (Term, { React, notify }) => {
 
       // Version 1 will set the event listener in onTerminal so only do the
       // following code for Version 2 of Hyper
-      if (this._majorVersion == '2') {
+      if (this._majorVersion == '2' && !this._eventTriggersSet) {
         this._term = term;
-        term.termRef.onmouseup = this._textSelected;
-        this._term.term.on('selection', this._textSelected);
-        this._term.term.on('refresh', this._textSelected);
-        window.rpc.on('global-store-text', () => {
-          this._onGlobalStoreText(term);
-        });
-        window.rpc.emit('find-export-submenu-item', {});
+        this._term.termRef.onmouseup = this._textSelected;
+        let eventObj = this._term.term._events;
+        if ('selection' in eventObj){
+            let selectionObj = eventObj['selection'];
+            let function_already_stored = false;
+            for (var i in selectionObj) {
+                let funcName = selectionObj[i].name;
+                if (funcName == "bound _textSelected") {
+                    function_already_stored = true;
+                    break;
+                }
+            }
+
+            if (!function_already_stored) {
+                console.log("we done did this");
+                this._term.term.on('selection', this._textSelected);
+            }
+        }
+
+        if (!('global-store-text' in window.rpc.emitter._events)) {
+            window.rpc.on('global-store-text', () => {
+              this._onGlobalStoreText(term);
+            });
+        }
+
+        if (typeof exportSelectedTextAsMenuItem === 'undefined') {
+            window.rpc.emit('find-export-submenu-item', {});
+        }
+
+        this._eventTriggersSet = true;
       }
     }
 
@@ -149,6 +173,10 @@ exports.decorateTerm = (Term, { React, notify }) => {
         });
       } else {
         // Version 2 / xterm.js
+        if (this._term == null) {
+            return;
+        }
+
         newText = this._term.term.selectionManager.selectionText;
         window.rpc.emit('text-selected', {
           selectedText: newText
