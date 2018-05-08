@@ -1,6 +1,6 @@
 {
   "name": "hyper-savetext",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Export text to file plugin for Hyper",
   "keywords": [
     "hyper.app",

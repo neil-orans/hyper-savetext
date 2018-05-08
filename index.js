@@ -132,33 +132,32 @@ exports.decorateTerm = (Term, { React, notify }) => {
         this._term = term;
         this._term.termRef.onmouseup = this._textSelected;
         let eventObj = this._term.term._events;
-        if ('selection' in eventObj){
-            let selectionObj = eventObj.selection;
-            let function_already_stored = false;
-            for (var i in selectionObj) {
-                let funcName = selectionObj[i].name;
-                if (funcName == "bound _textSelected") {
-                    function_already_stored = true;
-                    break;
-                }
+        if ('selection' in eventObj) {
+          let selectionObj = eventObj.selection;
+          let function_already_stored = false;
+          for (var i in selectionObj) {
+            let funcName = selectionObj[i].name;
+            if (funcName == 'bound _textSelected') {
+              function_already_stored = true;
+              break;
             }
+          }
 
-            if (!function_already_stored) {
-                this._term.term.on('selection', this._textSelected);
-            }
-        }
-        else {
+          if (!function_already_stored) {
             this._term.term.on('selection', this._textSelected);
+          }
+        } else {
+          this._term.term.on('selection', this._textSelected);
         }
 
         if (!('global-store-text' in window.rpc.emitter._events)) {
-            window.rpc.on('global-store-text', () => {
-              this._onGlobalStoreText(term);
-            });
+          window.rpc.on('global-store-text', () => {
+            this._onGlobalStoreText(term);
+          });
         }
 
         if (typeof exportSelectedTextAsMenuItem === 'undefined') {
-            window.rpc.emit('find-export-submenu-item', {});
+          window.rpc.emit('find-export-submenu-item', {});
         }
 
         this._eventTriggersSet = true;
@@ -176,7 +175,7 @@ exports.decorateTerm = (Term, { React, notify }) => {
       } else {
         // Version 2 / xterm.js
         if (this._term == null) {
-            return;
+          return;
         }
 
         newText = this._term.term.selectionManager.selectionText;
