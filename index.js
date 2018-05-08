@@ -144,9 +144,11 @@ exports.decorateTerm = (Term, { React, notify }) => {
             }
 
             if (!function_already_stored) {
-                console.log("we done did this");
                 this._term.term.on('selection', this._textSelected);
             }
+        }
+        else {
+            this._term.term.on('selection', this._textSelected);
         }
 
         if (!('global-store-text' in window.rpc.emitter._events)) {
