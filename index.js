@@ -131,7 +131,7 @@ exports.decorateTerm = (Term, { React, notify }) => {
       if (this._majorVersion == '2' && !this._eventTriggersSet) {
         this._term = term;
         this._term.termRef.onmouseup = this._textSelected;
-        let eventObj = this._term.term._events;
+        let eventObj = this._term.term._core._events;
         if ('selection' in eventObj) {
           let selectionObj = eventObj.selection;
           let function_already_stored = false;
@@ -178,7 +178,7 @@ exports.decorateTerm = (Term, { React, notify }) => {
           return;
         }
 
-        newText = this._term.term.selectionManager.selectionText;
+        newText = this._term.term._core.selectionManager.selectionText;
         window.rpc.emit('text-selected', {
           selectedText: newText
         });
@@ -199,13 +199,12 @@ exports.decorateTerm = (Term, { React, notify }) => {
       } else {
         let terminalText = [];
         let line_num;
-        for (line_num = 0; line_num < term.term.buffer.lines.length; line_num++) {
+        for (line_num = 0; line_num < term.term._core.buffer.lines.length; line_num++) {
           let char_array;
           let line = '';
           let non_whitespace_found = false;
-          for (char_array = term.term.buffer.lines._array[line_num].length - 1; char_array >= 0; char_array--) {
-            // Build lines character by character, removing trailing whitespace
-            let char = term.term.buffer.lines._array[line_num][char_array][1];
+          for (char_array = term.term._core.buffer.lines._array[line_num].length; char_array >= 0; char_array -= 3) {
+            let char = String.fromCharCode(term.term._core.buffer.lines._array[line_num]._data[char_array]);
             if ((non_whitespace_found && char == ' ') || (non_whitespace_found && char != ' ')) {
               line = char + line; // first index is actual char
             } else if (!non_whitespace_found && char == ' ') {
