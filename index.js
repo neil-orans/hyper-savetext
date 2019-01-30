@@ -203,9 +203,9 @@ exports.decorateTerm = (Term, { React, notify }) => {
           let char_array;
           let line = '';
           let non_whitespace_found = false;
-          for (char_array = term.term._core.buffer.lines._array[line_num].length; char_array >= 0; char_array -= 3) {
+          for (char_array = term.term._core.buffer.lines._array[line_num].length*3-2; char_array >= 0; char_array -= 3) {
             let char = String.fromCharCode(term.term._core.buffer.lines._array[line_num]._data[char_array]);
-            if ((non_whitespace_found && char == ' ') || (non_whitespace_found && char != ' ')) {
+            if (non_whitespace_found) {
               line = char + line; // first index is actual char
             } else if (!non_whitespace_found && char == ' ') {
               continue;
