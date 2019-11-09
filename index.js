@@ -127,8 +127,8 @@ exports.decorateTerm = (Term, { React, notify }) => {
       }
 
       // Version 1 will set the event listener in onTerminal so only do the
-      // following code for Version 2 of Hyper
-      if (this._majorVersion == '2' && !this._eventTriggersSet) {
+      // following code for Version 2+ of Hyper
+      if (this._majorVersion > '1' && !this._eventTriggersSet) {
         this._term = term;
         this._term.termRef.onmouseup = this._textSelected;
         let eventObj = this._term.term._core._events;
@@ -173,7 +173,7 @@ exports.decorateTerm = (Term, { React, notify }) => {
           selectedText: newText
         });
       } else {
-        // Version 2 / xterm.js
+        // Version 2+ / xterm.js
         if (this._term == null) {
           return;
         }
@@ -204,7 +204,11 @@ exports.decorateTerm = (Term, { React, notify }) => {
           let line = '';
           let non_whitespace_found = false;
           for (char_array = term.term._core.buffer.lines._array[line_num].length*3-2; char_array >= 0; char_array -= 3) {
-            let char = String.fromCharCode(term.term._core.buffer.lines._array[line_num]._data[char_array]);
+            let char_code = term.term._core.buffer.lines._array[line_num]._data[char_array];
+            if (char_code == 0){
+                continue;
+            }
+            let char = String.fromCharCode(char_code);
             if (non_whitespace_found) {
               line = char + line; // first index is actual char
             } else if (!non_whitespace_found && char == ' ') {

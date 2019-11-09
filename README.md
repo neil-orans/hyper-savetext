@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/neil-orans/hyper-savetext.svg?branch=master)](https://travis-ci.org/neil-orans/hyper-savetext) [![npm version](https://badge.fury.io/js/hyper-savetext.svg)](https://badge.fury.io/js/hyper-savetext)
 
-**hyper-savetext is a text export plugin for [Hyper](https://hyper.is/)**. It enables you to save/export text within the terminal to a text file. The feel and functionality of the plugin has been modeled after the same feature within macOS's Terminal.app. Currently, Hyper has been tested on macOS, Linux, and Windows with the stable version of Hyper 1.4.8 and 2.1.1.
+**hyper-savetext is a text export plugin for [Hyper](https://hyper.is/)**. It enables you to save/export text within the terminal to a text file. The feel and functionality of the plugin has been modeled after the same feature within macOS's Terminal.app. Currently, Hyper has been tested on macOS, Linux, and Windows with the stable version of Hyper 1.4.8, 2.1.1, and 3.0.2.
 
 <p align="center">
 <img src="./screenshots/screenshot1.jpg" width="400px" />
