@@ -37,6 +37,6 @@
   },
   "homepage": "https://github.com/neil-orans/hyper-savetext#readme",
   "dependencies": {
-    "npm": "^5.8.0"
+    "npm": "^6.13.4"
   }
 }
